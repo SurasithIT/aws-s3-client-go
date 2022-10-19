@@ -31,7 +31,7 @@ func NewS3Client(id, secret, token string, region *string) *S3 {
 	return s3Client
 }
 
-func (svc *S3) GetListObjects(bucket string, prefix string) ([]*s3.Object, error) {
+func (svc *S3) GetListObjects(bucket, prefix string) ([]*s3.Object, error) {
 
 	requetObject := &s3.ListObjectsV2Input{
 		Bucket: aws.String(bucket),
@@ -47,7 +47,7 @@ func (svc *S3) GetListObjects(bucket string, prefix string) ([]*s3.Object, error
 	return resp.Contents, nil
 }
 
-func (svc *S3) DownloadFile(bucket string, item string) (*aws.WriteAtBuffer, error) {
+func (svc *S3) DownloadFile(bucket, item string) (*aws.WriteAtBuffer, error) {
 	downloader := s3manager.NewDownloader(svc.Session)
 
 	requestInput := s3.GetObjectInput{
@@ -64,7 +64,7 @@ func (svc *S3) DownloadFile(bucket string, item string) (*aws.WriteAtBuffer, err
 	return buf, nil
 }
 
-func (svc *S3) UploadFile(file io.Reader, bucket string, item string) (*s3manager.UploadOutput, error) {
+func (svc *S3) UploadFile(file io.Reader, bucket, item string) (*s3manager.UploadOutput, error) {
 	uploader := s3manager.NewUploader(svc.Session)
 
 	requestInput := &s3manager.UploadInput{
@@ -81,7 +81,7 @@ func (svc *S3) UploadFile(file io.Reader, bucket string, item string) (*s3manage
 	return output, nil
 }
 
-func (svc *S3) CopyObject(sourceBucket string, sourceItem string, destinationBucket string, destinationBucketItem string) error {
+func (svc *S3) CopyObject(sourceBucket, sourceItem, destinationBucket, destinationBucketItem string) error {
 	source := sourceBucket + "/" + sourceItem
 	_, err := svc.Client.CopyObject(&s3.CopyObjectInput{
 		Bucket:     aws.String(destinationBucket),
@@ -107,7 +107,7 @@ func (svc *S3) CopyObject(sourceBucket string, sourceItem string, destinationBuc
 	return nil
 }
 
-func (svc *S3) DeleteObject(bucket string, item string) error {
+func (svc *S3) DeleteObject(bucket, item string) error {
 	_, err := svc.Client.DeleteObject(&s3.DeleteObjectInput{Bucket: aws.String(bucket), Key: aws.String(item)})
 	if err != nil {
 		log.Fatalf("Unable to delete object %q from bucket %q, %v", item, bucket, err)
@@ -125,7 +125,7 @@ func (svc *S3) DeleteObject(bucket string, item string) error {
 	return nil
 }
 
-func (svc *S3) GetObjectUrl(bucket string, key string) string {
+func (svc *S3) GetObjectUrl(bucket, key string) string {
 	params := &s3.GetObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(key),
